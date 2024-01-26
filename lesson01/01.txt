@@ -52,3 +52,34 @@ ExecStart=/usr/local/bin/node_exporter
 WantedBy=multi-user.target
 
 sudo systemctl start node_exporter
+
+###########################################################
+###########################################################
+
+# Вместо CMS, которую я не стал ставить по причине сложности процесса, я решил применить знания на практике непосредственно на работе
+# сначала сделал node-exporter у себя на виртуалке (см. prometeus.yml и result.odt)
+# а потом добавил наш сервис NiFi в мониторинг у себя на работе. Весь конфиг приложить не могу из-за конфиденциальности данных
+# надеюсь, что это равноценно, если бы я делал виртуальные таргеты для тестового прометеуса и вы засчитаете это ДЗ в плюс.
+
+prometheus.yml
+
+  - job_name: etl-nifi-support
+    scrape_interval: 60s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    file_sd_configs:
+      - files:
+        - config/etl-nifi-support.yml
+        refresh_interval: 1m
+config/etl-nifi-support.yml
+
+- targets:
+  - ib-yc-prod-nifi:50443
+  labels:
+    app: nifi-support
+    tech: nifi
+    stage: prod
+    platform: ETL
