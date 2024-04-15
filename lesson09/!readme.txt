@@ -1,0 +1,1 @@
+заменил filebeat на vector
